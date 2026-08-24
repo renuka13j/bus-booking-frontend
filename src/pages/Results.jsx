@@ -42,7 +42,9 @@ function Results() {
       <div className="max-w-2xl mx-auto px-4 py-10">
         <div className="mb-8">
           <h1 className="font-display text-2xl font-semibold text-cream flex items-center gap-3">
-            {source} <span className="text-gold-500 text-lg">→</span> {destination}
+            {source?.charAt(0).toUpperCase() + source?.slice(1)}{' '}
+            <span className="text-gold-500">→</span>{' '}
+            {destination?.charAt(0).toUpperCase() + destination?.slice(1)}
           </h1>
           <p className="text-slate-500 mt-1 text-sm">{date}</p>
         </div>

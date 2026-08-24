@@ -1,0 +1,253 @@
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaChair, FaRupeeSign, FaClock } from 'react-icons/fa';
+import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
+import TicketDivider from '../components/TicketDivider';
+
+function SeatSelection() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const [trip, setTrip] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [passengers, setPassengers] = useState({}); // { seatNumber: { name, age } }
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  useEffect(() => {
+    async function fetchTrip() {
+      try {
+        setLoading(true);
+        const res = await api.get(`/trips/${id}`);
+        setTrip(res.data);
+      } catch (err) {
+        setError('Could not load this trip.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTrip();
+  }, [id]);
+
+  function toggleSeat(seat) {
+    if (seat.isBooked) return; // can't select an already-booked seat
+
+    if (selectedSeats.includes(seat.seatNumber)) {
+      // deselect
+      setSelectedSeats(selectedSeats.filter((s) => s !== seat.seatNumber));
+      const updated = { ...passengers };
+      delete updated[seat.seatNumber];
+      setPassengers(updated);
+    } else {
+      // select
+      setSelectedSeats([...selectedSeats, seat.seatNumber]);
+      setPassengers({
+        ...passengers,
+        [seat.seatNumber]: { name: '', age: '' },
+      });
+    }
+  }
+
+  function updatePassenger(seatNumber, field, value) {
+    setPassengers({
+      ...passengers,
+      [seatNumber]: { ...passengers[seatNumber], [field]: value },
+    });
+  }
+
+  async function handleBooking() {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    setSubmitError('');
+
+    // Build the passengers array the backend expects
+    const passengerList = selectedSeats.map((seatNumber) => ({
+      name: passengers[seatNumber].name,
+      age: Number(passengers[seatNumber].age),
+      seatNumber,
+    }));
+
+    // Basic validation before sending
+    const incomplete = passengerList.some((p) => !p.name || !p.age);
+    if (incomplete) {
+      setSubmitError('Please fill in name and age for every selected seat.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      const res = await api.post('/bookings', {
+        tripId: id,
+        passengers: passengerList,
+        totalAmount: selectedSeats.length * trip.price,
+      });
+      navigate('/booking-confirmation', { state: { booking: res.data.booking, trip } });
+    } catch (err) {
+      setSubmitError(err.response?.data?.message || 'Booking failed. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-navy-950">
+        <Navbar />
+        <p className="text-center text-slate-500 py-20">Loading trip...</p>
+      </div>
+    );
+  }
+
+  if (error || !trip) {
+    return (
+      <div className="min-h-screen bg-navy-950">
+        <Navbar />
+        <p className="text-center text-red-400 py-20">{error || 'Trip not found.'}</p>
+      </div>
+    );
+  }
+
+  const totalAmount = selectedSeats.length * trip.price;
+
+  return (
+    <div className="min-h-screen bg-navy-950">
+      <Navbar />
+
+      <div className="max-w-3xl mx-auto px-4 py-10 grid md:grid-cols-[1fr_320px] gap-6">
+        {/* Left: seat map */}
+        <div>
+          <h1 className="font-display text-2xl font-semibold text-cream mb-1">
+            {trip.route.source} <span className="text-gold-500">→</span> {trip.route.destination}
+          </h1>
+          <p className="text-slate-400 text-sm flex items-center gap-1.5 mb-6">
+            <FaClock className="text-slate-500 text-xs" />
+            {trip.departureTime} - {trip.arrivalTime} · {trip.route.operator.name}
+          </p>
+
+          <div className="bg-navy-800 border border-navy-700 rounded-xl p-6">
+            <div className="flex items-center gap-6 mb-6 text-xs text-slate-400">
+              <div className="flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded border border-gold-500 inline-block" />
+                Available
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded bg-gold-500 inline-block" />
+                Selected
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded bg-navy-700 inline-block" />
+                Booked
+              </div>
+            </div>
+
+            <div className="grid grid-cols-5 gap-3 max-w-xs">
+              {trip.seats.map((seat) => {
+                const isSelected = selectedSeats.includes(seat.seatNumber);
+                return (
+                  <button
+                    key={seat.seatNumber}
+                    onClick={() => toggleSeat(seat)}
+                    disabled={seat.isBooked}
+                    className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs font-medium transition
+                      ${seat.isBooked
+                        ? 'bg-navy-700 text-slate-600 cursor-not-allowed'
+                        : isSelected
+                        ? 'bg-gold-500 text-navy-950'
+                        : 'border border-gold-500 text-gold-500 hover:bg-gold-500/10'
+                      }`}
+                  >
+                    <FaChair />
+                    {seat.seatNumber}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Passenger details */}
+          {selectedSeats.length > 0 && (
+            <div className="mt-6 flex flex-col gap-4">
+              <h2 className="text-cream font-medium">Passenger Details</h2>
+              {selectedSeats.map((seatNumber) => (
+                <div
+                  key={seatNumber}
+                  className="bg-navy-800 border border-navy-700 rounded-lg p-4 flex gap-3 items-center"
+                >
+                  <span className="bg-gold-500/10 text-gold-500 text-xs font-semibold px-2.5 py-1.5 rounded">
+                    {seatNumber}
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Passenger name"
+                    value={passengers[seatNumber]?.name || ''}
+                    onChange={(e) => updatePassenger(seatNumber, 'name', e.target.value)}
+                    className="flex-1 bg-navy-900 border border-navy-700 text-cream rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Age"
+                    min="1"
+                    value={passengers[seatNumber]?.age || ''}
+                    onChange={(e) => updatePassenger(seatNumber, 'age', e.target.value)}
+                    className="w-20 bg-navy-900 border border-navy-700 text-cream rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right: summary / ticket stub */}
+        <div className="bg-navy-800 border border-navy-700 rounded-xl p-6 h-fit sticky top-6">
+          <h2 className="font-display text-lg font-semibold text-cream mb-4">
+            Booking Summary
+          </h2>
+
+          <div className="flex justify-between text-sm text-slate-400 mb-2">
+            <span>Seats selected</span>
+            <span className="text-cream">{selectedSeats.length}</span>
+          </div>
+          <div className="flex justify-between text-sm text-slate-400 mb-2">
+            <span>Price per seat</span>
+            <span className="text-cream flex items-center">
+              <FaRupeeSign className="text-xs" />{trip.price}
+            </span>
+          </div>
+
+          <TicketDivider />
+
+          <div className="flex justify-between items-center mt-2 mb-6">
+            <span className="text-slate-300 font-medium">Total</span>
+            <span className="text-gold-500 font-display font-semibold text-xl flex items-center">
+              <FaRupeeSign className="text-sm" />{totalAmount}
+            </span>
+          </div>
+
+          {submitError && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg px-3 py-2 mb-4">
+              {submitError}
+            </div>
+          )}
+
+          <button
+            onClick={handleBooking}
+            disabled={selectedSeats.length === 0 || submitting}
+            className="w-full bg-gold-500 text-navy-950 font-semibold rounded-lg py-3 hover:bg-gold-400 active:scale-[0.98] transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {submitting ? 'Booking...' : !user ? 'Log in to Book' : 'Confirm Booking'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SeatSelection;
