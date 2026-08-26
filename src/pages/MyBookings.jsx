@@ -9,21 +9,41 @@ function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [cancellingId, setCancellingId] = useState(null);
 
   useEffect(() => {
-    async function fetchBookings() {
-      try {
-        setLoading(true);
-        const res = await api.get('/bookings/my');
-        setBookings(res.data);
-      } catch (err) {
-        setError('Could not load your bookings.');
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchBookings();
   }, []);
+
+  async function fetchBookings() {
+    try {
+      setLoading(true);
+      const res = await api.get('/bookings/my');
+      setBookings(res.data);
+    } catch (err) {
+      setError('Could not load your bookings.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCancel(bookingId) {
+    const confirmed = window.confirm('Cancel this booking? This cannot be undone.');
+    if (!confirmed) return;
+
+    try {
+      setCancellingId(bookingId);
+      await api.patch(`/bookings/${bookingId}/cancel`);
+      // Update just this booking's status locally, instead of re-fetching everything
+      setBookings((prev) =>
+        prev.map((b) => (b._id === bookingId ? { ...b, status: 'cancelled' } : b))
+      );
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to cancel booking');
+    } finally {
+      setCancellingId(null);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-navy-950">
@@ -90,9 +110,20 @@ function MyBookings() {
                   <span className="mx-2 text-navy-700">·</span>
                   {booking.trip.route.operator.name}
                 </div>
-                <div className="text-gold-500 font-semibold flex items-center">
-                  <FaRupeeSign className="text-xs" />
-                  {booking.totalAmount}
+                <div className="flex items-center gap-4">
+                  <div className="text-gold-500 font-semibold flex items-center">
+                    <FaRupeeSign className="text-xs" />
+                    {booking.totalAmount}
+                  </div>
+                  {booking.status === 'confirmed' && (
+                    <button
+                      onClick={() => handleCancel(booking._id)}
+                      disabled={cancellingId === booking._id}
+                      className="text-xs text-red-400 hover:text-red-300 border border-red-500/30 hover:border-red-500/50 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+                    >
+                      {cancellingId === booking._id ? 'Cancelling...' : 'Cancel'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
