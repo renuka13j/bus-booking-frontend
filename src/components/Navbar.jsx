@@ -23,7 +23,10 @@ function Navbar() {
       </Link>
 
       {user ? (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <Link to="/my-bookings" className="text-sm text-slate-300 hover:text-gold-500 transition">
+            My Bookings
+          </Link>
           <div className="flex items-center gap-2 text-slate-300 text-sm">
             <FaUserCircle className="text-gold-500" />
             {user.name}
@@ -36,7 +39,7 @@ function Navbar() {
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-4 text-sm">
+        <div className = "flex items-center gap-4 text-sm" >
           <Link to="/login" className="text-slate-300 hover:text-gold-500 transition">
             Log in
           </Link>
@@ -47,8 +50,9 @@ function Navbar() {
             Sign Up
           </Link>
         </div>
-      )}
-    </nav>
+  )
+}
+    </nav >
   );
 }
 

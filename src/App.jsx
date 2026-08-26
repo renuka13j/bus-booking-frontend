@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import SeatSelection from './pages/SeatSelection';
 import BookingConfirmation from './pages/BookingConfirmation';
+import MyBookings from './pages/MyBookings';
+
 
 function App() {
   return (
@@ -18,6 +20,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/trip/:id" element={<SeatSelection />} />
           <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+          <Route path="/my-bookings" element={<MyBookings />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
