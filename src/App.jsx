@@ -7,7 +7,7 @@ import Signup from './pages/Signup';
 import SeatSelection from './pages/SeatSelection';
 import BookingConfirmation from './pages/BookingConfirmation';
 import MyBookings from './pages/MyBookings';
-
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
           <Route path="/trip/:id" element={<SeatSelection />} />
           <Route path="/booking-confirmation" element={<BookingConfirmation />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
