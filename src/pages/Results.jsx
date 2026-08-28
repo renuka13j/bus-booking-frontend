@@ -39,18 +39,20 @@ function Results() {
     <div className="min-h-screen bg-navy-950">
       <Navbar />
 
-      <div className="max-w-2xl mx-auto px-4 py-10">
-        <div className="mb-8">
-          <h1 className="font-display text-2xl font-semibold text-cream flex items-center gap-3">
-            {source?.charAt(0).toUpperCase() + source?.slice(1)}{' '}
-            <span className="text-gold-500">→</span>{' '}
-            {destination?.charAt(0).toUpperCase() + destination?.slice(1)}
+      <div className="max-w-2xl mx-auto px-4 py-8 sm:py-10 animate-fade-in">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="font-display text-xl sm:text-2xl font-semibold text-cream flex items-center gap-2 sm:gap-3">
+            {source} <span className="text-gold-500">→</span> {destination}
           </h1>
           <p className="text-slate-500 mt-1 text-sm">{date}</p>
         </div>
 
         {loading && (
-          <div className="text-center text-slate-500 py-12">Loading trips...</div>
+          <div className="flex flex-col gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="skeleton rounded-xl h-24 border border-navy-700" />
+            ))}
+          </div>
         )}
 
         {error && (
@@ -65,17 +67,18 @@ function Results() {
           </div>
         )}
 
-        <div className="flex flex-col gap-5">
-          {trips.map((trip) => {
+        <div className="flex flex-col gap-4">
+          {trips.map((trip, index) => {
             const availableSeats = trip.seats.filter((s) => !s.isBooked).length;
 
             return (
               <div
                 key={trip._id}
-                className="bg-navy-800 rounded-xl border border-navy-700 hover:border-gold-500/40 transition overflow-hidden flex"
+                className="bg-navy-800 rounded-xl border border-navy-700 hover:border-gold-500/40 transition overflow-hidden flex flex-col sm:flex-row animate-fade-in"
+                style={{ animationDelay: `${index * 0.08}s`, animationFillMode: 'backwards' }}
               >
                 <div className="flex-1 p-5 flex gap-4 items-start">
-                  <div className="bg-gold-500/10 text-gold-500 p-3 rounded-lg">
+                  <div className="bg-gold-500/10 text-gold-500 p-3 rounded-lg shrink-0">
                     <FaBusAlt className="text-xl" />
                   </div>
                   <div>
@@ -92,13 +95,15 @@ function Results() {
                   </div>
                 </div>
 
-                <div className="relative flex items-center px-0">
+                <div className="hidden sm:flex relative items-center px-0">
                   <div className="absolute -top-3 w-4 h-4 bg-navy-950 rounded-full" />
                   <div className="h-full border-l border-dashed border-navy-700" />
                   <div className="absolute -bottom-3 w-4 h-4 bg-navy-950 rounded-full" />
                 </div>
 
-                <div className="p-5 flex flex-col items-center justify-center gap-2 min-w-[140px]">
+                <div className="sm:hidden border-t border-dashed border-navy-700 mx-5" />
+
+                <div className="p-5 flex sm:flex-col items-center sm:items-center justify-between sm:justify-center gap-2 sm:min-w-[140px]">
                   <p className="font-display font-semibold text-gold-500 text-lg flex items-center">
                     <FaRupeeSign className="text-sm" />
                     {trip.price}

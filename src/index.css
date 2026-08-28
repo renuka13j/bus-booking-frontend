@@ -44,3 +44,11 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #0B1120 inset !important;
+  -webkit-text-fill-color: #F5F3EE !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
