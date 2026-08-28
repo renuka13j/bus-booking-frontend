@@ -15,7 +15,7 @@ function SeatSelection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [passengers, setPassengers] = useState({}); // { seatNumber: { name, age } }
+  const [passengers, setPassengers] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
@@ -35,16 +35,14 @@ function SeatSelection() {
   }, [id]);
 
   function toggleSeat(seat) {
-    if (seat.isBooked) return; // can't select an already-booked seat
+    if (seat.isBooked) return;
 
     if (selectedSeats.includes(seat.seatNumber)) {
-      // deselect
       setSelectedSeats(selectedSeats.filter((s) => s !== seat.seatNumber));
       const updated = { ...passengers };
       delete updated[seat.seatNumber];
       setPassengers(updated);
     } else {
-      // select
       setSelectedSeats([...selectedSeats, seat.seatNumber]);
       setPassengers({
         ...passengers,
@@ -68,14 +66,12 @@ function SeatSelection() {
 
     setSubmitError('');
 
-    // Build the passengers array the backend expects
     const passengerList = selectedSeats.map((seatNumber) => ({
       name: passengers[seatNumber].name,
       age: Number(passengers[seatNumber].age),
       seatNumber,
     }));
 
-    // Basic validation before sending
     const incomplete = passengerList.some((p) => !p.name || !p.age);
     if (incomplete) {
       setSubmitError('Please fill in name and age for every selected seat.');
@@ -101,7 +97,11 @@ function SeatSelection() {
     return (
       <div className="min-h-screen bg-navy-950">
         <Navbar />
-        <p className="text-center text-slate-500 py-20">Loading trip...</p>
+        <div className="max-w-3xl mx-auto px-4 py-10">
+          <div className="skeleton rounded-lg h-8 w-64 mb-2" />
+          <div className="skeleton rounded-lg h-4 w-40 mb-6" />
+          <div className="skeleton rounded-xl h-80 border border-navy-700" />
+        </div>
       </div>
     );
   }
@@ -121,10 +121,10 @@ function SeatSelection() {
     <div className="min-h-screen bg-navy-950">
       <Navbar />
 
-      <div className="max-w-3xl mx-auto px-4 py-10 grid md:grid-cols-[1fr_320px] gap-6">
+      <div className="max-w-3xl mx-auto px-4 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-[1fr_320px] gap-6 animate-fade-in">
         {/* Left: seat map */}
         <div>
-          <h1 className="font-display text-2xl font-semibold text-cream mb-1">
+          <h1 className="font-display text-xl sm:text-2xl font-semibold text-cream mb-1">
             {trip.route.source} <span className="text-gold-500">→</span> {trip.route.destination}
           </h1>
           <p className="text-slate-400 text-sm flex items-center gap-1.5 mb-6">
@@ -132,8 +132,8 @@ function SeatSelection() {
             {trip.departureTime} - {trip.arrivalTime} · {trip.route.operator.name}
           </p>
 
-          <div className="bg-navy-800 border border-navy-700 rounded-xl p-6">
-            <div className="flex items-center gap-6 mb-6 text-xs text-slate-400">
+          <div className="bg-navy-800 border border-navy-700 rounded-xl p-4 sm:p-6">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 text-xs text-slate-400">
               <div className="flex items-center gap-1.5">
                 <span className="w-4 h-4 rounded border border-gold-500 inline-block" />
                 Available
@@ -148,7 +148,7 @@ function SeatSelection() {
               </div>
             </div>
 
-            <div className="grid grid-cols-5 gap-3 max-w-xs">
+            <div className="grid grid-cols-5 gap-2 sm:gap-3 max-w-xs mx-auto sm:mx-0">
               {trip.seats.map((seat) => {
                 const isSelected = selectedSeats.includes(seat.seatNumber);
                 return (
@@ -160,7 +160,7 @@ function SeatSelection() {
                       ${seat.isBooked
                         ? 'bg-navy-700 text-slate-600 cursor-not-allowed'
                         : isSelected
-                        ? 'bg-gold-500 text-navy-950'
+                        ? 'bg-gold-500 text-navy-950 scale-105'
                         : 'border border-gold-500 text-gold-500 hover:bg-gold-500/10'
                       }`}
                   >
@@ -174,14 +174,14 @@ function SeatSelection() {
 
           {/* Passenger details */}
           {selectedSeats.length > 0 && (
-            <div className="mt-6 flex flex-col gap-4">
+            <div className="mt-6 flex flex-col gap-4 animate-fade-in">
               <h2 className="text-cream font-medium">Passenger Details</h2>
               {selectedSeats.map((seatNumber) => (
                 <div
                   key={seatNumber}
-                  className="bg-navy-800 border border-navy-700 rounded-lg p-4 flex gap-3 items-center"
+                  className="bg-navy-800 border border-navy-700 rounded-lg p-4 flex flex-col sm:flex-row gap-3 sm:items-center"
                 >
-                  <span className="bg-gold-500/10 text-gold-500 text-xs font-semibold px-2.5 py-1.5 rounded">
+                  <span className="bg-gold-500/10 text-gold-500 text-xs font-semibold px-2.5 py-1.5 rounded w-fit">
                     {seatNumber}
                   </span>
                   <input
@@ -197,7 +197,7 @@ function SeatSelection() {
                     min="1"
                     value={passengers[seatNumber]?.age || ''}
                     onChange={(e) => updatePassenger(seatNumber, 'age', e.target.value)}
-                    className="w-20 bg-navy-900 border border-navy-700 text-cream rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50"
+                    className="w-full sm:w-20 bg-navy-900 border border-navy-700 text-cream rounded-lg px-3 py-2 text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50"
                   />
                 </div>
               ))}
@@ -205,8 +205,8 @@ function SeatSelection() {
           )}
         </div>
 
-        {/* Right: summary / ticket stub */}
-        <div className="bg-navy-800 border border-navy-700 rounded-xl p-6 h-fit sticky top-6">
+        {/* Right: summary */}
+        <div className="bg-navy-800 border border-navy-700 rounded-xl p-6 h-fit md:sticky md:top-6">
           <h2 className="font-display text-lg font-semibold text-cream mb-4">
             Booking Summary
           </h2>
