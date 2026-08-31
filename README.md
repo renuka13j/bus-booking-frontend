@@ -1,17 +1,47 @@
+# TravelEase — Bus Ticket Booking Platform (Frontend)
 
-# React + Vite
+A full-stack bus ticket booking platform built with React, featuring live seat selection, JWT-based authentication, and a responsive dark-themed UI.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Live Demo:** https://renuka-travelease.vercel.app
+**Backend Repo:** https://github.com/renuka13j/bus-booking-backend
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- User authentication (signup/login) with JWT, persisted across sessions
+- Search buses by source, destination, and date (case-insensitive)
+- Interactive seat map with live availability
+- Race-condition-safe seat booking (backed by atomic MongoDB operations)
+- Booking history with cancellation support
+- Admin panel to manage operators, routes, and trips
+- Fully responsive design with animated transitions and loading skeletons
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React** (Vite) — UI framework
+- **React Router** — client-side routing
+- **Tailwind CSS** — styling
+- **Axios** — API communication
+- **Context API** — auth state management
+- **react-icons** — iconography
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started Locally
+
+```bash
+git clone https://github.com/renuka13j/bus-booking-frontend.git
+cd bus-booking-frontend
+npm install
+```
+
+Create a `.env` file: VITE_API_BASE_URL
+
+Run the dev server:
+```bash
+npm run dev
+```
+
+> Note: requires the [backend](https://github.com/renuka13j/bus-booking-backend) running locally, or point `VITE_API_BASE_URL` to the deployed backend.
+
+## Related
+
+- [Backend repository](https://github.com/renuka13j/bus-booking-backend) — Node.js/Express API, MongoDB schemas, authentication logic
