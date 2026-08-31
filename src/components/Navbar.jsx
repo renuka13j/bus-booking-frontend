@@ -16,44 +16,48 @@ function Navbar() {
 
   return (
     <nav className="bg-navy-900 border-b border-navy-700 px-4 sm:px-6 py-4 relative z-20">
-      <div className="flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2" onClick={() => setMenuOpen(false)}>
-          <div className="bg-gold-500/10 p-2 rounded-lg">
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          to="/"
+          className="flex items-center gap-2 shrink-0"
+          onClick={() => setMenuOpen(false)}
+        >
+          <div className="bg-gold-500/10 p-2 rounded-lg shrink-0">
             <FaBus className="text-gold-500 text-xl" />
           </div>
-          <span className="text-xl font-display font-semibold text-cream tracking-wide">
+          <span className="text-lg sm:text-xl font-display font-semibold text-cream tracking-wide whitespace-nowrap">
             TravelEase
           </span>
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden sm:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4 shrink-0">
           {user ? (
             <>
               {user.role === 'admin' && (
-                <Link to="/admin" className="text-sm text-slate-300 hover:text-gold-500 transition">
+                <Link to="/admin" className="text-sm text-slate-300 hover:text-gold-500 transition whitespace-nowrap">
                   Admin
                 </Link>
               )}
-              <Link to="/my-bookings" className="text-sm text-slate-300 hover:text-gold-500 transition">
+              <Link to="/my-bookings" className="text-sm text-slate-300 hover:text-gold-500 transition whitespace-nowrap">
                 My Bookings
               </Link>
-              <div className="flex items-center gap-2 text-slate-300 text-sm">
-                <FaUserCircle className="text-gold-500" />
+              <div className="flex items-center gap-2 text-slate-300 text-sm whitespace-nowrap">
+                <FaUserCircle className="text-gold-500 shrink-0" />
                 {user.name}
               </div>
-              <button onClick={handleLogout} className="text-sm text-slate-400 hover:text-gold-500 transition">
+              <button onClick={handleLogout} className="text-sm text-slate-400 hover:text-gold-500 transition whitespace-nowrap">
                 Log out
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" className="text-sm text-slate-300 hover:text-gold-500 transition">
+              <Link to="/login" className="text-sm text-slate-300 hover:text-gold-500 transition whitespace-nowrap">
                 Log in
               </Link>
               <Link
                 to="/signup"
-                className="bg-gold-500 text-navy-950 font-medium px-4 py-1.5 rounded-lg hover:bg-gold-400 active:scale-95 transition"
+                className="bg-gold-500 text-navy-950 font-medium px-4 py-1.5 rounded-lg hover:bg-gold-400 active:scale-95 transition whitespace-nowrap"
               >
                 Sign Up
               </Link>
@@ -63,7 +67,7 @@ function Navbar() {
 
         {/* Mobile menu toggle */}
         <button
-          className="sm:hidden text-cream text-xl"
+          className="md:hidden text-cream text-xl shrink-0"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? <FaTimes /> : <FaBars />}
@@ -72,7 +76,7 @@ function Navbar() {
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className="sm:hidden mt-4 flex flex-col gap-3 pb-2 animate-fade-in">
+        <div className="md:hidden mt-4 flex flex-col gap-3 pb-2 animate-fade-in">
           {user ? (
             <>
               {user.role === 'admin' && (
