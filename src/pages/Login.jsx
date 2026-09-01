@@ -4,6 +4,7 @@ import { FaEnvelope, FaLock } from 'react-icons/fa';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -31,11 +32,11 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-950">
+    <div className="min-h-screen bg-navy-950 flex flex-col">
       <Navbar />
 
-      <div className="flex justify-center px-4 pt-16">
-        <div className="bg-navy-800 rounded-2xl border border-navy-700 shadow-xl w-full max-w-sm p-8">
+      <div className="flex justify-center px-4 pt-16 flex-1">
+        <div className="bg-navy-800 rounded-2xl border border-navy-700 shadow-xl w-full max-w-sm p-8 h-fit">
           <h1 className="font-display text-2xl font-semibold text-cream text-center mb-1">
             Welcome back
           </h1>
@@ -91,6 +92,8 @@ function Login() {
           </p>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

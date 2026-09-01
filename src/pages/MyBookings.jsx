@@ -4,6 +4,7 @@ import { FaRupeeSign, FaClock, FaTicketAlt } from 'react-icons/fa';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
 import TicketDivider from '../components/TicketDivider';
+import Footer from '../components/Footer';
 
 function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -34,7 +35,6 @@ function MyBookings() {
     try {
       setCancellingId(bookingId);
       await api.patch(`/bookings/${bookingId}/cancel`);
-      // Update just this booking's status locally, instead of re-fetching everything
       setBookings((prev) =>
         prev.map((b) => (b._id === bookingId ? { ...b, status: 'cancelled' } : b))
       );
@@ -46,10 +46,10 @@ function MyBookings() {
   }
 
   return (
-    <div className="min-h-screen bg-navy-950">
+    <div className="min-h-screen bg-navy-950 flex flex-col">
       <Navbar />
 
-      <div className="max-w-2xl mx-auto px-4 py-10">
+      <div className="max-w-2xl mx-auto px-4 py-10 flex-1 w-full">
         <h1 className="font-display text-2xl font-semibold text-cream mb-6">
           My Bookings
         </h1>
@@ -130,6 +130,8 @@ function MyBookings() {
           ))}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

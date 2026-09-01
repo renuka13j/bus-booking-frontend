@@ -4,6 +4,7 @@ import { FaClock, FaRupeeSign, FaBusAlt } from 'react-icons/fa';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
 import TicketDivider from '../components/TicketDivider';
+import Footer from '../components/Footer';
 
 function Results() {
   const [searchParams] = useSearchParams();
@@ -36,10 +37,10 @@ function Results() {
   }, [source, destination, date]);
 
   return (
-    <div className="min-h-screen bg-navy-950">
+    <div className="min-h-screen bg-navy-950 flex flex-col">
       <Navbar />
 
-      <div className="max-w-2xl mx-auto px-4 py-8 sm:py-10 animate-fade-in">
+      <div className="max-w-2xl mx-auto px-4 py-8 sm:py-10 animate-fade-in flex-1 w-full">
         <div className="mb-6 sm:mb-8">
           <h1 className="font-display text-xl sm:text-2xl font-semibold text-cream flex items-center gap-2 sm:gap-3">
             {source} <span className="text-gold-500">→</span> {destination}
@@ -120,8 +121,12 @@ function Results() {
           })}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
 
 export default Results;
+
+// yes give it also add background image in all only leaving login and signup pages

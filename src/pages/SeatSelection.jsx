@@ -5,6 +5,7 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import TicketDivider from '../components/TicketDivider';
+import Footer from '../components/Footer';
 
 function SeatSelection() {
   const { id } = useParams();
@@ -95,22 +96,24 @@ function SeatSelection() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-navy-950">
+      <div className="min-h-screen bg-navy-950 flex flex-col">
         <Navbar />
-        <div className="max-w-3xl mx-auto px-4 py-10">
+        <div className="max-w-3xl mx-auto px-4 py-10 flex-1 w-full">
           <div className="skeleton rounded-lg h-8 w-64 mb-2" />
           <div className="skeleton rounded-lg h-4 w-40 mb-6" />
           <div className="skeleton rounded-xl h-80 border border-navy-700" />
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (error || !trip) {
     return (
-      <div className="min-h-screen bg-navy-950">
+      <div className="min-h-screen bg-navy-950 flex flex-col">
         <Navbar />
-        <p className="text-center text-red-400 py-20">{error || 'Trip not found.'}</p>
+        <p className="text-center text-red-400 py-20 flex-1">{error || 'Trip not found.'}</p>
+        <Footer />
       </div>
     );
   }
@@ -118,10 +121,10 @@ function SeatSelection() {
   const totalAmount = selectedSeats.length * trip.price;
 
   return (
-    <div className="min-h-screen bg-navy-950">
+    <div className="min-h-screen bg-navy-950 flex flex-col">
       <Navbar />
 
-      <div className="max-w-3xl mx-auto px-4 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-[1fr_320px] gap-6 animate-fade-in">
+      <div className="max-w-3xl mx-auto px-4 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-[1fr_320px] gap-6 animate-fade-in flex-1 w-full">
         {/* Left: seat map */}
         <div>
           <h1 className="font-display text-xl sm:text-2xl font-semibold text-cream mb-1">
@@ -172,7 +175,6 @@ function SeatSelection() {
             </div>
           </div>
 
-          {/* Passenger details */}
           {selectedSeats.length > 0 && (
             <div className="mt-6 flex flex-col gap-4 animate-fade-in">
               <h2 className="text-cream font-medium">Passenger Details</h2>
@@ -206,7 +208,7 @@ function SeatSelection() {
         </div>
 
         {/* Right: summary */}
-        <div className="bg-navy-800 border border-navy-700 rounded-xl p-6 h-fit md:sticky md:top-6">
+        <div className="bg-navy-800 border border-navy-700 rounded-xl p-6 h-fit md:sticky md:top-20">
           <h2 className="font-display text-lg font-semibold text-cream mb-4">
             Booking Summary
           </h2>
@@ -246,6 +248,8 @@ function SeatSelection() {
           </button>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
