@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { FaClock, FaRupeeSign, FaBusAlt } from 'react-icons/fa';
+import { FaClock, FaRupeeSign } from 'react-icons/fa';
 import api from '../api/axios';
 import Navbar from '../components/Navbar';
 import TicketDivider from '../components/TicketDivider';
 import Footer from '../components/Footer';
+import OperatorAvatar from '../components/OperatorAvatar';
 
 function Results() {
   const [searchParams] = useSearchParams();
@@ -86,9 +87,7 @@ function Results() {
                   style={{ animationDelay: `${index * 0.08}s`, animationFillMode: 'backwards' }}
                 >
                   <div className="flex-1 p-5 flex gap-4 items-start">
-                    <div className="bg-gold-500/10 text-gold-500 p-3 rounded-lg shrink-0">
-                      <FaBusAlt className="text-xl" />
-                    </div>
+                    <OperatorAvatar name={trip.route.operator.name} size="lg" />
                     <div>
                       <p className="font-medium text-cream">
                         {trip.route.operator.name}
